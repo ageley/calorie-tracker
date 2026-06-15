@@ -1,10 +1,13 @@
 package ai.gelej.calorietracker.ingredient.parsing;
 
+import lombok.Getter;
+
 /**
  * The four nutrition facts in their canonical Calories/Fat/Carbs/Protein order. Each fact knows
  * whether it is measured in energy or mass units, which constrains the units a parser will accept on
  * its line.
  */
+@Getter
 public enum NutritionFact {
 
     CALORIES(UnitKind.ENERGY),
@@ -16,10 +19,6 @@ public enum NutritionFact {
 
     NutritionFact(UnitKind unitKind) {
         this.unitKind = unitKind;
-    }
-
-    public UnitKind getUnitKind() {
-        return unitKind;
     }
 
     /**

@@ -2,6 +2,7 @@ package ai.gelej.calorietracker.ingredient.parsing;
 
 import ai.gelej.calorietracker.ingredient.Language;
 import ai.gelej.calorietracker.ingredient.NutritionFacts;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Optional;
 
@@ -23,5 +24,5 @@ public interface IngredientParser {
      * @return the parsed facts, or {@link Optional#empty()} if the message is not in this parser's
      * language or does not match the expected format
      */
-    Optional<NutritionFacts> parse(String text);
+    Optional<NutritionFacts> parse(@Nullable String text);
 }

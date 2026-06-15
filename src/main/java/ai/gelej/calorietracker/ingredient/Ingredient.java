@@ -1,6 +1,8 @@
 package ai.gelej.calorietracker.ingredient;
 
+import org.jspecify.annotations.Nullable;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.math.BigDecimal;
@@ -23,7 +25,7 @@ import java.time.Instant;
  */
 @Table("ingredient")
 public record Ingredient(
-        @Id Long id,
+        @Id @Column("ingredient_id") @Nullable Long id,
         Long chatId,
         String name,
         BigDecimal caloriesKcal,

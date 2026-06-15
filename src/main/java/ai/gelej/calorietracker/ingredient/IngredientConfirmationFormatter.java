@@ -5,27 +5,44 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 
 /**
- * Renders a saved ingredient into a confirmation message in the message's own language. The output
- * mirrors the accepted input format so it can be parsed back if forwarded; the leading comment line
- * ends with a sparkles emoji so the parser drops it.
+ * Renders a saved ingredient into a confirmation message that mirrors the accepted input format, so
+ * it can be parsed back if forwarded; the leading comment line ends with a sparkles emoji so the
+ * parser drops it. The pattern here is English; subclasses override it for other languages.
  */
 @Component
 public class IngredientConfirmationFormatter {
+
+    private static final String PATTERN = """
+            Saved ✨
+            %s
+            Calories: %s kcal
+            Fat: %s g
+            Carbs: %s g
+            Protein: %s g""";
+
+    /**
+     * @return the language this formatter renders messages in
+     */
+    public Language language() {
+        return Language.ENGLISH;
+    }
+
+    /**
+     * @return the message pattern, a text block with placeholders for the name and the four values
+     */
+    protected String pattern() {
+        return PATTERN;
+    }
 
     /**
      * Builds the confirmation message for a saved ingredient.
      *
      * @param facts the saved nutrition facts
-     * @param language the language to render the message in
      * @return the confirmation message text
      */
-    public String format(NutritionFacts facts, Language language) {
-        return language.getSavedComment() + " ✨\n"
-                + facts.name() + "\n"
-                + language.getCaloriesLabel() + ": " + plain(facts.caloriesKcal()) + " " + language.getEnergyUnit() + "\n"
-                + language.getFatLabel() + ": " + plain(facts.fatG()) + " " + language.getMassUnit() + "\n"
-                + language.getCarbsLabel() + ": " + plain(facts.carbsG()) + " " + language.getMassUnit() + "\n"
-                + language.getProteinLabel() + ": " + plain(facts.proteinG()) + " " + language.getMassUnit();
+    public String format(NutritionFacts facts) {
+        return String.format(pattern(), facts.name(), plain(facts.caloriesKcal()),
+                plain(facts.fatG()), plain(facts.carbsG()), plain(facts.proteinG()));
     }
 
     private static String plain(BigDecimal value) {

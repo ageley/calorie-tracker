@@ -19,7 +19,7 @@ class IngredientConfirmationFormatterTest {
                 new BigDecimal("438"), new BigDecimal("19.0"), new BigDecimal("61"), new BigDecimal("5"));
 
         //when
-        String message = formatter.format(facts, Language.ENGLISH);
+        String message = formatter.format(facts);
 
         //then
         assertThat(message).isEqualTo("""
@@ -38,7 +38,7 @@ class IngredientConfirmationFormatterTest {
                 new BigDecimal("438"), new BigDecimal("19"), new BigDecimal("61"), new BigDecimal("5"));
 
         //when
-        String message = formatter.format(facts, Language.ENGLISH);
+        String message = formatter.format(facts);
 
         //then
         assertThat(new EnglishIngredientParser().parse(message)).contains(facts);
@@ -51,7 +51,7 @@ class IngredientConfirmationFormatterTest {
                 new BigDecimal("438"), new BigDecimal("19"), new BigDecimal("61"), new BigDecimal("5"));
 
         //when
-        String message = formatter.format(facts, Language.RUSSIAN);
+        String message = new RussianIngredientConfirmationFormatter().format(facts);
 
         //then
         assertThat(new RussianIngredientParser().parse(message)).contains(facts);

@@ -2,11 +2,10 @@ package ai.gelej.calorietracker.ingredient;
 
 import ai.gelej.calorietracker.ingredient.parsing.IngredientParser;
 import ai.gelej.calorietracker.telegram.SendTelegramMessageTool;
-import ai.gelej.calorietracker.telegram.dispatcher.handlers.MessageHandler;
+import ai.gelej.calorietracker.telegram.dispatcher.handlers.AbstractMessageHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.message.Message;
 
 import java.util.List;
@@ -20,34 +19,35 @@ import java.util.Optional;
 @Component
 @Order(0)
 @RequiredArgsConstructor
-public class IngredientHandler implements MessageHandler {
+public class IngredientHandler extends AbstractMessageHandler {
 
     private final List<IngredientParser> parsers;
     private final SaveIngredientTool saveIngredientTool;
     private final SendTelegramMessageTool sendTelegramMessageTool;
-    private final IngredientConfirmationFormatter formatter;
+    private final List<IngredientConfirmationFormatter> formatters;
 
     @Override
-    public boolean handle(Update update) {
-        if (update == null || !update.hasMessage()) {
-            return false;
-        }
-        Message message = update.getMessage();
-        if (!message.hasText()) {
-            return false;
-        }
+    protected boolean handle(Message message) {
         Long chatId = message.getChatId();
         String text = message.getText();
         for (IngredientParser parser : parsers) {
             Optional<NutritionFacts> parsed = parser.parse(text);
             if (parsed.isPresent()) {
                 NutritionFacts facts = parsed.get();
-                saveIngredientTool.saveIngredient(chatId, facts.name(), facts.caloriesKcal(),
+                saveIngredientTool.save(chatId, facts.name(), facts.caloriesKcal(),
                         facts.fatG(), facts.carbsG(), facts.proteinG());
-                sendTelegramMessageTool.sendMessage(chatId, formatter.format(facts, parser.language()));
+                sendTelegramMessageTool.send(chatId, format(facts, parser.language()));
                 return true;
             }
         }
         return false;
+    }
+
+    private String format(NutritionFacts facts, Language language) {
+        return formatters.stream()
+                .filter(formatter -> formatter.language() == language)
+                .findFirst()
+                .orElseThrow()
+                .format(facts);
     }
 }

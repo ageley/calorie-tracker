@@ -1,5 +1,5 @@
 CREATE TABLE ingredient (
-    id            BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    ingredient_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     chat_id       BIGINT      NOT NULL,
     name          TEXT        NOT NULL,
     calories_kcal NUMERIC      NOT NULL,

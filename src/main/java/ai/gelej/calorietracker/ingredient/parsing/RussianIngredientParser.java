@@ -4,25 +4,12 @@ import ai.gelej.calorietracker.ingredient.Language;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.Map;
-
 /**
- * Parses Russian ingredient messages.
+ * Parses Russian ingredient messages by overriding the fact-name and unit placeholders.
  */
 @Component
 @Order(1)
 public class RussianIngredientParser extends AbstractIngredientParser {
-
-    private static final Map<NutritionFact, List<String>> NAMES = Map.of(
-            NutritionFact.CALORIES, List.of("калории", "к"),
-            NutritionFact.FAT, List.of("жир", "жиры", "ж"),
-            NutritionFact.CARBS, List.of("углеводы", "угли", "карбсы", "у"),
-            NutritionFact.PROTEIN, List.of("белки", "протеины", "протеин", "б"));
-
-    private static final Map<NutritionFact.UnitKind, List<String>> UNITS = Map.of(
-            NutritionFact.UnitKind.ENERGY, List.of("ккал"),
-            NutritionFact.UnitKind.MASS, List.of("г", "гр", "грамм"));
 
     @Override
     public Language language() {
@@ -30,12 +17,20 @@ public class RussianIngredientParser extends AbstractIngredientParser {
     }
 
     @Override
-    protected List<String> namesOf(NutritionFact fact) {
-        return NAMES.get(fact);
+    protected String names(NutritionFact fact) {
+        return switch (fact) {
+            case CALORIES -> "калории|к";
+            case FAT -> "жир|жиры|ж";
+            case CARBS -> "углеводы|угли|карбсы|у";
+            case PROTEIN -> "белки|протеины|протеин|б";
+        };
     }
 
     @Override
-    protected List<String> unitsOf(NutritionFact.UnitKind unitKind) {
-        return UNITS.get(unitKind);
+    protected String units(NutritionFact.UnitKind unitKind) {
+        return switch (unitKind) {
+            case ENERGY -> "ккал";
+            case MASS -> "г|гр|грамм";
+        };
     }
 }
