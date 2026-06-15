@@ -25,6 +25,15 @@ Project-specific decisions belong in the Javadoc of the code they concern, not h
 - Prefer Lombok over hand-written boilerplate. Use `@RequiredArgsConstructor` for constructor
   injection of `final` fields instead of declaring the constructor by hand; `@Getter`/`@Setter`
   for accessors; `@Slf4j` for loggers.
+- Build objects with `@Builder` once a type has more than three constructor parameters, so call
+  sites set only the fields they care about by name. Combined with database-owned columns (see
+  **Database**), this means never passing throwaway `false`/`null` arguments for values something
+  else fills in.
+
+## APIs
+
+- Never call an API that is already marked `@Deprecated`; adopt its documented replacement, even on
+  milestone/pre-release dependency versions. Studying the current API is the point.
 
 ## Package layout
 
@@ -74,5 +83,10 @@ Project-specific decisions belong in the Javadoc of the code they concern, not h
 
 ## Docker
 
-- The `Dockerfile` contains only `FROM`, `COPY` the jar, and `ENTRYPOINT`. The jar is built by the
-  CI/Gradle step beforehand; the image does not build it.
+- The application `Dockerfile` contains only `FROM`, `COPY` the jar, and `ENTRYPOINT`. The jar is
+  built by the CI/Gradle step beforehand; the image does not build it.
+- Pin everything an image installs. Pin base images to a minor (e.g. `postgres:18.4`) and `apt`
+  packages with a version glob that fixes the minor while allowing patch updates (e.g.
+  `postgresql-18-cron=1.6.*`).
+- Favour clarity over micro-optimization: skip space-shaving steps such as
+  `rm -rf /var/lib/apt/lists/*` that add cognitive load to save a few megabytes.

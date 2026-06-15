@@ -56,7 +56,13 @@ public class SaveIngredientTool {
      */
     public void save(Long chatId, String name, BigDecimal caloriesKcal, BigDecimal fatG,
                      BigDecimal carbsG, BigDecimal proteinG) {
-        repository.save(new Ingredient(null, chatId, name, caloriesKcal, fatG, carbsG, proteinG,
-                false, null));
+        repository.save(Ingredient.builder()
+                .chatId(chatId)
+                .name(name)
+                .caloriesKcal(caloriesKcal)
+                .fatG(fatG)
+                .carbsG(carbsG)
+                .proteinG(proteinG)
+                .build());
     }
 }
