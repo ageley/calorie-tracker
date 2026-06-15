@@ -12,8 +12,7 @@ jobs:
   claude:
     if: |
       (github.actor == 'ageley' || github.actor == 'claude') &&
-      (github.triggering_actor == 'ageley' || github.triggering_actor == 'claude') &&
-      (github.event.pull_request.user.login == 'ageley' || github.event.pull_request.user.login == 'claude')
+      (github.triggering_actor == 'ageley' || github.triggering_actor == 'claude')
       (
         (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
         (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
