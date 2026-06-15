@@ -2,7 +2,7 @@ package ai.gelej.calorietracker.ingredient;
 
 import ai.gelej.calorietracker.ingredient.parsing.IngredientParser;
 import ai.gelej.calorietracker.telegram.SendTelegramMessageTool;
-import ai.gelej.calorietracker.telegram.dispatcher.handlers.AbstractMessageHandler;
+import ai.gelej.calorietracker.telegram.dispatcher.handlers.AbstractTextMessageHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -19,7 +19,7 @@ import java.util.Optional;
 @Component
 @Order(0)
 @RequiredArgsConstructor
-public class IngredientHandler extends AbstractMessageHandler {
+public class IngredientHandler extends AbstractTextMessageHandler {
 
     private final List<IngredientParser> parsers;
     private final SaveIngredientTool saveIngredientTool;
@@ -27,11 +27,10 @@ public class IngredientHandler extends AbstractMessageHandler {
     private final List<IngredientConfirmationFormatter> formatters;
 
     @Override
-    protected boolean handle(Message message) {
+    protected boolean handle(Message message, List<String> lines) {
         Long chatId = message.getChatId();
-        String text = message.getText();
         for (IngredientParser parser : parsers) {
-            Optional<NutritionFacts> parsed = parser.parse(text);
+            Optional<NutritionFacts> parsed = parser.parse(lines);
             if (parsed.isPresent()) {
                 NutritionFacts facts = parsed.get();
                 saveIngredientTool.save(chatId, facts.name(), facts.caloriesKcal(),

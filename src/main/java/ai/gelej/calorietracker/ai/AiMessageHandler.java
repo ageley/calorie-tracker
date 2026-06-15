@@ -2,12 +2,13 @@ package ai.gelej.calorietracker.ai;
 
 import ai.gelej.calorietracker.ingredient.SaveIngredientTool;
 import ai.gelej.calorietracker.telegram.SendTelegramMessageTool;
-import ai.gelej.calorietracker.telegram.dispatcher.handlers.AbstractMessageHandler;
+import ai.gelej.calorietracker.telegram.dispatcher.handlers.AbstractTextMessageHandler;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.message.Message;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,7 +19,7 @@ import java.util.Map;
  */
 @Component
 @Order(1)
-public class AiMessageHandler extends AbstractMessageHandler {
+public class AiMessageHandler extends AbstractTextMessageHandler {
 
     private static final String SYSTEM_PROMPT = """
             You are a nutrition assistant for a Telegram bot that stores ingredient nutrition facts \
@@ -43,7 +44,7 @@ public class AiMessageHandler extends AbstractMessageHandler {
     }
 
     @Override
-    protected boolean handle(Message message) {
+    protected boolean handle(Message message, List<String> lines) {
         chatClient.prompt()
                 .user(message.getText())
                 .toolContext(Map.<String, Object>of(AiToolContext.CHAT_ID, message.getChatId()))

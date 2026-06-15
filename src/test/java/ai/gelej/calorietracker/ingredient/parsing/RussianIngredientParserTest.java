@@ -5,6 +5,7 @@ import ai.gelej.calorietracker.ingredient.NutritionFacts;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,17 +24,13 @@ class RussianIngredientParserTest {
     }
 
     @Test
-    void parse_wellFormedMessage_extractsFactsInOrder() {
+    void parse_wellFormedLines_extractsFactsInOrder() {
         //given
-        String text = """
-                Шоколадный брауни
-                Калории: 438 ккал
-                Жир: 19 г
-                Углеводы: 61 г
-                Белки: 5 г""";
+        List<String> lines = List.of("Шоколадный брауни", "Калории: 438 ккал", "Жир: 19 г",
+                "Углеводы: 61 г", "Белки: 5 г");
 
         //when
-        Optional<NutritionFacts> facts = parser.parse(text);
+        Optional<NutritionFacts> facts = parser.parse(lines);
 
         //then
         assertThat(facts).contains(new NutritionFacts("Шоколадный брауни",
@@ -43,15 +40,10 @@ class RussianIngredientParserTest {
     @Test
     void parse_abbreviatedNamesAndUnits_areAccepted() {
         //given
-        String text = """
-                Шоколадный брауни
-                к 438ккал
-                ж 19гр
-                у 61
-                б 5г""";
+        List<String> lines = List.of("Шоколадный брауни", "к 438ккал", "ж 19гр", "у 61", "б 5г");
 
         //when
-        Optional<NutritionFacts> facts = parser.parse(text);
+        Optional<NutritionFacts> facts = parser.parse(lines);
 
         //then
         assertThat(facts).contains(new NutritionFacts("Шоколадный брауни",
@@ -61,15 +53,11 @@ class RussianIngredientParserTest {
     @Test
     void parse_mixedCaseAndCommaDecimals_areAccepted() {
         //given
-        String text = """
-                Шоколадный брауни
-                УГЛЕВОДЫ: 61,5 г
-                Калории: 438 ккал
-                ЖИРЫ: 19 г
-                Протеины: 5,2 г""";
+        List<String> lines = List.of("Шоколадный брауни", "УГЛЕВОДЫ: 61,5 г", "Калории: 438 ккал",
+                "ЖИРЫ: 19 г", "Протеины: 5,2 г");
 
         //when
-        Optional<NutritionFacts> facts = parser.parse(text);
+        Optional<NutritionFacts> facts = parser.parse(lines);
 
         //then
         assertThat(facts).map(NutritionFacts::carbsG).contains(new BigDecimal("61.5"));
@@ -77,52 +65,26 @@ class RussianIngredientParserTest {
     }
 
     @Test
-    void parse_commentLinesEndingWithSparkles_areIgnored() {
-        //given
-        String text = """
-                Сохранено ✨
-                Шоколадный брауни
-                Калории: 438 ккал
-                Жир: 19 г
-                Углеводы: 61 г
-                Белки: 5 г""";
-
-        //when
-        Optional<NutritionFacts> facts = parser.parse(text);
-
-        //then
-        assertThat(facts).map(NutritionFacts::name).contains("Шоколадный брауни");
-    }
-
-    @Test
     void parse_unknownUnit_returnsEmpty() {
         //given
-        String text = """
-                Шоколадный брауни
-                Калории: 438 ккал
-                Жир: 19 кг
-                Углеводы: 61 г
-                Белки: 5 г""";
+        List<String> lines = List.of("Шоколадный брауни", "Калории: 438 ккал", "Жир: 19 кг",
+                "Углеводы: 61 г", "Белки: 5 г");
 
         //when
-        Optional<NutritionFacts> facts = parser.parse(text);
+        Optional<NutritionFacts> facts = parser.parse(lines);
 
         //then
         assertThat(facts).isEmpty();
     }
 
     @Test
-    void parse_englishMessage_returnsEmpty() {
+    void parse_englishLines_returnsEmpty() {
         //given
-        String text = """
-                Milk chocolate
-                Calories: 438 kcal
-                Fat: 19 g
-                Carbs: 61 g
-                Protein: 5 g""";
+        List<String> lines = List.of("Milk chocolate", "Calories: 438 kcal", "Fat: 19 g", "Carbs: 61 g",
+                "Protein: 5 g");
 
         //when
-        Optional<NutritionFacts> facts = parser.parse(text);
+        Optional<NutritionFacts> facts = parser.parse(lines);
 
         //then
         assertThat(facts).isEmpty();

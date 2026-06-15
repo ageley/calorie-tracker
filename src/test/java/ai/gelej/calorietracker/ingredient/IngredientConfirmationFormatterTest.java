@@ -1,7 +1,8 @@
 package ai.gelej.calorietracker.ingredient;
 
-import ai.gelej.calorietracker.ingredient.parsing.EnglishIngredientParser;
+import ai.gelej.calorietracker.ingredient.parsing.IngredientParser;
 import ai.gelej.calorietracker.ingredient.parsing.RussianIngredientParser;
+import ai.gelej.calorietracker.telegram.dispatcher.handlers.AbstractTextMessageHandler;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -41,7 +42,8 @@ class IngredientConfirmationFormatterTest {
         String message = formatter.format(facts);
 
         //then
-        assertThat(new EnglishIngredientParser().parse(message)).contains(facts);
+        assertThat(new IngredientParser().parse(AbstractTextMessageHandler.contentLines(message)))
+                .contains(facts);
     }
 
     @Test
@@ -54,6 +56,7 @@ class IngredientConfirmationFormatterTest {
         String message = new RussianIngredientConfirmationFormatter().format(facts);
 
         //then
-        assertThat(new RussianIngredientParser().parse(message)).contains(facts);
+        assertThat(new RussianIngredientParser().parse(AbstractTextMessageHandler.contentLines(message)))
+                .contains(facts);
     }
 }

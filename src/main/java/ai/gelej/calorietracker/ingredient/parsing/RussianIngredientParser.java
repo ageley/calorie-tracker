@@ -5,11 +5,12 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 /**
- * Parses Russian ingredient messages by overriding the fact-name and unit placeholders.
+ * Parses Russian ingredient messages by overriding the fact-name and unit placeholders of the default
+ * English {@link IngredientParser}.
  */
 @Component
 @Order(1)
-public class RussianIngredientParser extends AbstractIngredientParser {
+public class RussianIngredientParser extends IngredientParser {
 
     @Override
     public Language language() {

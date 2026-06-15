@@ -53,9 +53,13 @@ Project-specific decisions belong in the Javadoc of the code they concern, not h
 
 ## Database
 
-- Use `snake_case` for all table and column names; table names are singular (e.g. `ingredient`).
-- Prefix the primary-key column with the table name, e.g. `ingredient_id` rather than a bare `id`.
-  Map it in the entity with `@Column("ingredient_id")` while keeping the Java field named `id`.
+- Use `snake_case` for all table and column names; table names are plural (e.g. `ingredients`).
+- Prefix the primary-key column with the singular table name, e.g. `ingredient_id` rather than a
+  bare `id`. Map it in the entity with `@Column("ingredient_id")` while keeping the Java field named
+  `id`.
+- Let the database own audit/state columns. Give columns such as `created_at` and `deleted` a
+  database `DEFAULT` and mark the corresponding entity fields `@ReadOnlyProperty`, so they are
+  populated by the database on read and never written from application code.
 - Prefer scheduling recurring database maintenance in the database itself (a `pg_cron` job created
   in a Flyway migration) over an application-level `@Scheduled` bean.
 

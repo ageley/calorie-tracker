@@ -8,7 +8,6 @@ import org.springframework.ai.tool.annotation.ToolParam;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 
 /**
  * Tool that persists an ingredient's nutrition facts per 100 grams. Exposed both to the programmatic
@@ -58,6 +57,6 @@ public class SaveIngredientTool {
     public void save(Long chatId, String name, BigDecimal caloriesKcal, BigDecimal fatG,
                      BigDecimal carbsG, BigDecimal proteinG) {
         repository.save(new Ingredient(null, chatId, name, caloriesKcal, fatG, carbsG, proteinG,
-                false, Instant.now()));
+                false, null));
     }
 }
