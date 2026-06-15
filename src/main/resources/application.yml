@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: calorie-tracker
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/calorie_tracker}
+    username: ${DB_USERNAME:calorie_tracker}
+    password: ${DB_PASSWORD:calorie_tracker}
+  ai:
+    anthropic:
+      api-key: ${ANTHROPIC_API_KEY:}
+      chat:
+        options:
+          model: claude-haiku-4-5
+
+telegram:
+  bot:
+    token: ${TELEGRAM_BOT_TOKEN:}
+    mode: long-polling
+    webhook:
+      url: ${TELEGRAM_WEBHOOK_URL:}
+      path: /telegram/webhook
+
+ingredient:
+  cleanup:
+    cron: "0 0 * * * *"

@@ -1,0 +1,31 @@
+services:
+  calorie-tracker-pg:
+    image: postgres:18-alpine
+    container_name: calorie-tracker-pg
+    environment:
+      POSTGRES_DB: calorie_tracker
+      POSTGRES_USER: calorie_tracker
+      POSTGRES_PASSWORD: calorie_tracker
+    volumes:
+      - calorie-tracker-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U calorie_tracker" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  calorie-tracker:
+    build: .
+    image: calorie-tracker:1.0
+    container_name: calorie-tracker
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      DB_URL: jdbc:postgresql://postgres:5432/calorie_tracker
+      DB_USERNAME: calorie_tracker
+      DB_PASSWORD: calorie_tracker
+
+volumes:
+  calorie-tracker-pgdata:

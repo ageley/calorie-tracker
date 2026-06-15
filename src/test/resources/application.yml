@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: calorie-tracker
+  ai:
+    anthropic:
+      api-key: test-key
+
+telegram:
+  bot:
+    token: test-token
+    mode: long-polling
