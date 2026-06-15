@@ -11,7 +11,7 @@ import java.time.Instant;
 /**
  * A stored ingredient record scoped to a Telegram chat, holding its nutrition facts per 100 grams
  * in the canonical Calories/Fat/Carbs/Protein order. Duplicates are inserted as-is; superseded rows
- * are flagged with {@code deleted} by a cleanup job rather than removed.
+ * are flagged with {@code deleted} by a scheduled database cleanup rather than removed.
  *
  * @param id the generated identifier
  * @param chatId the Telegram chat the record belongs to

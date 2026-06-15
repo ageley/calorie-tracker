@@ -19,7 +19,3 @@ telegram:
     webhook:
       url: ${TELEGRAM_WEBHOOK_URL:}
       path: /telegram/webhook
-
-ingredient:
-  cleanup:
-    cron: "0 0 * * * *"

@@ -51,6 +51,14 @@ Project-specific decisions belong in the Javadoc of the code they concern, not h
   The `build.gradle.kts` `plugins { }` block then lists plugins without versions.
 - Keep dependency versions current.
 
+## Database
+
+- Use `snake_case` for all table and column names; table names are singular (e.g. `ingredient`).
+- Prefix the primary-key column with the table name, e.g. `ingredient_id` rather than a bare `id`.
+  Map it in the entity with `@Column("ingredient_id")` while keeping the Java field named `id`.
+- Prefer scheduling recurring database maintenance in the database itself (a `pg_cron` job created
+  in a Flyway migration) over an application-level `@Scheduled` bean.
+
 ## Spring wiring
 
 - Prefer plain beans over boilerplate lifecycle wrappers. Declare beans directly as components, not

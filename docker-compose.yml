@@ -1,7 +1,14 @@
 services:
   calorie-tracker-pg:
-    image: postgres:18.0-alpine
+    build: ./docker/postgres
+    image: calorie-tracker-pg:1.0
     container_name: calorie-tracker-pg
+    command:
+      - postgres
+      - -c
+      - shared_preload_libraries=pg_cron
+      - -c
+      - cron.database_name=calorie_tracker
     environment:
       POSTGRES_DB: calorie_tracker
       POSTGRES_USER: calorie_tracker
