@@ -17,11 +17,13 @@ import java.time.Instant;
  * are flagged with {@code deleted} by a scheduled database cleanup rather than removed. Both
  * {@code deleted} and {@code createdAt} are owned by the database (column defaults) and marked
  * {@link ReadOnlyProperty}, so they are populated on read and never written from code. Built through
- * the Lombok {@code @Builder}, so callers set only the columns they own and skip the rest.
+ * the Lombok {@code @Builder}, so callers set only the columns they own and skip the rest;
+ * {@code toBuilder} lets tests derive a variant from an existing instance by changing only the
+ * fields they care about.
  */
 @Table("ingredients")
 @Getter
-@Builder
+@Builder(toBuilder = true)
 public class Ingredient {
 
     @Id

@@ -28,7 +28,8 @@ Project-specific decisions belong in the Javadoc of the code they concern, not h
 - Build objects with `@Builder` once a type has more than three constructor parameters, so call
   sites set only the fields they care about by name. Combined with database-owned columns (see
   **Database**), this means never passing throwaway `false`/`null` arguments for values something
-  else fills in.
+  else fills in. Add `toBuilder = true` so callers (especially tests) can derive a variant from an
+  existing instance by changing only the fields they care about.
 
 ## APIs
 
@@ -48,6 +49,14 @@ Project-specific decisions belong in the Javadoc of the code they concern, not h
   description, and the expected outcome (e.g. `handle_messageWithText_echoesItBack`).
 - Structure the body with `//given`, `//when`, and `//then` sections, each introduced by that
   single-line comment.
+- Never repeat the same test data twice within a test. Build one generic data object in a
+  `@BeforeEach`/`@BeforeAll` setup and reuse it across the action and the assertions, deriving
+  per-case variants by changing only the fields a case actually exercises (e.g. via
+  `@Builder(toBuilder = true)` or by reusing the shared object's unchanged fields).
+- Cover behaviour that only exists in the database (migrations, `pg_cron` jobs, column defaults)
+  with a Testcontainers integration test against the real image, rather than mocking it away. Invoke
+  a scheduled DB job on demand in the test (e.g. run its stored `cron.job.command`) instead of
+  waiting for its schedule.
 
 ## Build & dependencies
 
@@ -58,7 +67,7 @@ Project-specific decisions belong in the Javadoc of the code they concern, not h
 - Wire **plugin** versions in `settings.gradle.kts`: read them in `pluginManagement` with
   `val springBootVersion: String by settings` and apply with `id("...") version springBootVersion`.
   The `build.gradle.kts` `plugins { }` block then lists plugins without versions.
-- Keep dependency versions current.
+- Keep dependency versions current; adopt new GA releases promptly and fix whatever they deprecate.
 
 ## Database
 

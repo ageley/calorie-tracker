@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.message.Message;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Fallback handler backed by the cheapest Haiku model. It runs after the programmatic parser and
@@ -38,7 +39,7 @@ public class AiMessageHandler extends AbstractTextMessageHandler {
                             SendTelegramMessageTool sendTelegramMessageTool) {
         this.chatClient = chatClientBuilder
                 .defaultSystem(SYSTEM_PROMPT)
-                .defaultTools(tools -> tools.instances(saveIngredientTool, sendTelegramMessageTool))
+                .defaultTools(saveIngredientTool, sendTelegramMessageTool)
                 .build();
     }
 
@@ -46,7 +47,7 @@ public class AiMessageHandler extends AbstractTextMessageHandler {
     protected boolean handle(Message message, List<String> lines) {
         chatClient.prompt()
                 .user(message.getText())
-                .tools(tools -> tools.context(AiToolContext.CHAT_ID, message.getChatId()))
+                .toolContext(Map.of(AiToolContext.CHAT_ID, message.getChatId()))
                 .call()
                 .content();
         return true;
