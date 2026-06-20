@@ -27,6 +27,6 @@ public class LongPollingClientConfig {
      */
     @Bean
     public TelegramClient telegramClient(BotProperties properties) {
-        return new OkHttpTelegramClient(properties.getToken());
+        return new OkHttpTelegramClient(properties.token());
     }
 }

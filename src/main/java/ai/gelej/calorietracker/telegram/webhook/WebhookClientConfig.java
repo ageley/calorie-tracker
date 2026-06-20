@@ -30,8 +30,8 @@ public class WebhookClientConfig {
      */
     @Bean
     public TelegramClient telegramClient(BotProperties properties) {
-        TelegramClient telegramClient = new OkHttpTelegramClient(properties.getToken());
-        String url = properties.getWebhook().getUrl() + properties.getWebhook().getPath();
+        TelegramClient telegramClient = new OkHttpTelegramClient(properties.token());
+        String url = properties.webhook().url() + properties.webhook().path();
         try {
             telegramClient.execute(SetWebhook.builder()
                     .url(url)

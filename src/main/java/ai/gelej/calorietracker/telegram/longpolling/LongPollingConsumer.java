@@ -26,7 +26,7 @@ public class LongPollingConsumer implements SpringLongPollingBot, LongPollingSin
 
     @Override
     public String getBotToken() {
-        return properties.getToken();
+        return properties.token();
     }
 
     @Override

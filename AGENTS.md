@@ -20,6 +20,10 @@ Project-specific decisions belong in the Javadoc of the code they concern, not h
           .build());
   ```
 
+## Data carriers
+
+- Prefer records with `@Builder(toBuilder = true)` over POJOs for immutable data carriers when framework binding and persistence requirements allow it.
+
 ## Lombok
 
 - Prefer Lombok over hand-written boilerplate. Use `@RequiredArgsConstructor` for constructor
@@ -53,10 +57,8 @@ Project-specific decisions belong in the Javadoc of the code they concern, not h
   `@BeforeEach`/`@BeforeAll` setup and reuse it across the action and the assertions, deriving
   per-case variants by changing only the fields a case actually exercises (e.g. via
   `@Builder(toBuilder = true)` or by reusing the shared object's unchanged fields).
-- Cover behaviour that only exists in the database (migrations, `pg_cron` jobs, column defaults)
-  with a Testcontainers integration test against the real image, rather than mocking it away. Invoke
-  a scheduled DB job on demand in the test (e.g. run its stored `cron.job.command`) instead of
-  waiting for its schedule.
+- Cover behaviour that only exists in the database (migrations, column defaults) with a
+  Testcontainers integration test against the real image, rather than mocking it away.
 
 ## Build & dependencies
 
@@ -78,8 +80,6 @@ Project-specific decisions belong in the Javadoc of the code they concern, not h
 - Let the database own audit/state columns. Give columns such as `created_at` and `deleted` a
   database `DEFAULT` and mark the corresponding entity fields `@ReadOnlyProperty`, so they are
   populated by the database on read and never written from application code.
-- Prefer scheduling recurring database maintenance in the database itself (a `pg_cron` job created
-  in a Flyway migration) over an application-level `@Scheduled` bean.
 
 ## Spring wiring
 
@@ -94,8 +94,6 @@ Project-specific decisions belong in the Javadoc of the code they concern, not h
 
 - The application `Dockerfile` contains only `FROM`, `COPY` the jar, and `ENTRYPOINT`. The jar is
   built by the CI/Gradle step beforehand; the image does not build it.
-- Pin everything an image installs. Pin base images to a minor (e.g. `postgres:18.4`) and `apt`
-  packages with a version glob that fixes the minor while allowing patch updates (e.g.
-  `postgresql-18-cron=1.6.*`).
+- Pin base images to a minor (e.g. `postgres:18.4-alpine3.24`).
 - Favour clarity over micro-optimization: skip space-shaving steps such as
   `rm -rf /var/lib/apt/lists/*` that add cognitive load to save a few megabytes.
