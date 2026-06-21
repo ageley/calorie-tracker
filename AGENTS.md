@@ -23,6 +23,7 @@ Project-specific decisions belong in the Javadoc of the code they concern, not h
 ## Data carriers
 
 - Prefer records with `@Builder(toBuilder = true)` over POJOs for immutable data carriers when framework binding and persistence requirements allow it.
+- Write each record component on its own line. Put each component annotation on its own line as well.
 
 ## Lombok
 
