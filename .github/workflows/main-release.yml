@@ -47,8 +47,13 @@ jobs:
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
       - name: Tag main commit
-        uses: rickstaa/action-create-tag@v1.7.2
+        uses: actions/github-script@v9
         with:
-          tag: ${{ steps.version.outputs.app_version }}
-          message: Release ${{ steps.version.outputs.app_version }}
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const version = '${{ steps.version.outputs.app_version }}';
+            await github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: `refs/tags/${version}`,
+              sha: context.sha
+            });

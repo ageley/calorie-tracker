@@ -69,4 +69,4 @@ No Docker Hub account or paid Docker repository is required for this setup. The 
 
 The main release workflow now uses `docker/metadata-action` to prepare Docker image tags and labels from the Gradle-provided application version. That keeps the workflow from manually building the image name in shell.
 
-The workflow also uses `rickstaa/action-create-tag` to create the Git tag for the pushed `main` commit. The tag value still comes directly from `./gradlew -q printAppVersion`, so the Docker image tag and Git tag stay identical.
+The workflow also uses the official `actions/github-script` action to create the Git tag for the pushed `main` commit through the GitHub API. The tag value still comes directly from `./gradlew -q printAppVersion`, so the Docker image tag and Git tag stay identical.
