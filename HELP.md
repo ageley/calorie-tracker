@@ -64,3 +64,9 @@ To set it up:
 8. For a public image, set the package visibility to public.
 
 No Docker Hub account or paid Docker repository is required for this setup. The image name produced by the workflow uses the GitHub repository name and the app version only, for example `ghcr.io/ageley/calorie-tracker:0.0.1`.
+
+## Workflow action simplification
+
+The main release workflow now uses `docker/metadata-action` to prepare Docker image tags and labels from the Gradle-provided application version. That keeps the workflow from manually building the image name in shell.
+
+The workflow also uses `rickstaa/action-create-tag` to create the Git tag for the pushed `main` commit. The tag value still comes directly from `./gradlew -q printAppVersion`, so the Docker image tag and Git tag stay identical.
