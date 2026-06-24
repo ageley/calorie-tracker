@@ -34,3 +34,33 @@ That is cleaner than parsing `gradle.properties` in shell because Gradle remains
 The automated Flyway warning is valid for projects where a versioned migration has already been applied to at least one database. Flyway records applied migrations in `flyway_schema_history`; if a database contains a row for version `2` but the code no longer contains `V2__...sql`, Flyway validation can fail at startup because the applied migration is missing from the resolved local migrations.
 
 In this pull request, you clarified that this migration was not applied anywhere. Under that assumption, deleting it is safe because no existing database has a `flyway_schema_history` row that needs the deleted file to remain resolvable. If that assumption changes, the safer path is to restore the old `V2__schedule_ingredient_cleanup.sql` file and add a new forward migration that removes the scheduled behavior.
+
+## Split CI workflows
+
+The CI configuration is now split into two independent workflows.
+
+The pull request workflow runs only for these pull request events:
+
+- `opened`: a pull request is created.
+- `synchronize`: the pull request source branch receives new commits.
+
+That workflow only runs unit tests with `./gradlew test`; it does not build, log in to GHCR, push an image, or create a Git tag.
+
+The main release workflow runs only when `main` receives a pushed commit. It runs unit tests, builds the jar, reads the version with `./gradlew -q printAppVersion`, builds and pushes `ghcr.io/<owner>/<repo>:<appVersion>`, and tags the pushed `main` commit with exactly `<appVersion>`.
+
+## Setting up free GHCR publishing for a public GitHub repository
+
+GitHub Container Registry is available for public repositories without creating a separate Docker Hub repository. The workflow can publish to `ghcr.io/<owner>/<repo>` by using the repository's built-in `GITHUB_TOKEN`.
+
+To set it up:
+
+1. Open the GitHub repository settings.
+2. Go to `Actions` > `General`.
+3. In `Workflow permissions`, select `Read and write permissions`.
+4. Save the setting.
+5. Merge the workflow into `main` and let the main release workflow run once.
+6. Open the repository or organization `Packages` page and find the created container package.
+7. If needed, open the package settings and connect it to the repository.
+8. For a public image, set the package visibility to public.
+
+No Docker Hub account or paid Docker repository is required for this setup. The image name produced by the workflow uses the GitHub repository name and the app version only, for example `ghcr.io/ageley/calorie-tracker:0.0.1`.
