@@ -5,7 +5,8 @@ plugins {
 }
 
 group = "ai.gelej"
-version = "0.0.1-SNAPSHOT"
+val appVersion: String by project
+version = appVersion
 
 val javaVersion: String by project
 val springAiVersion: String by project
@@ -38,9 +39,6 @@ dependencies {
 	compileOnly("org.projectlombok:lombok")
 	annotationProcessor("org.projectlombok:lombok")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
-	testImplementation("org.springframework.boot:spring-boot-testcontainers")
-	testImplementation("org.testcontainers:junit-jupiter")
-	testImplementation("org.testcontainers:postgresql")
 	testCompileOnly("org.projectlombok:lombok")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 	testAnnotationProcessor("org.projectlombok:lombok")
@@ -54,4 +52,10 @@ dependencyManagement {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+}
+
+tasks.register("printAppVersion") {
+	doLast {
+		println(appVersion)
+	}
 }
